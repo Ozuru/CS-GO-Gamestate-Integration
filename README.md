@@ -49,6 +49,15 @@ This is the name of the file that your sound is. Make sure that you are using a 
 If this boolean is set to true, it will automatically delete and create a new configuration file every time it runs. Set this flag to true if you've changed any of the hotkeys and want it to regenerate a new configuration file.
 It's generally safe to leave this on all the time, I wouldn't set this to false. If you do change it, remember that Python is case-sensitive with it's booleans and the first letter is always capital.
 
+## I'm a nerd. How does this work?
+Yay, someone finally asked!
+
+CS:GO's gamestate integration POSTs information to a webserver specified in a configuration file (gamestate_integration.cfg). Through Flask, we setup a local webserver (on port 6969) and have the configuration file POST its information there. Whenever we detect a change in the ammo clip for any of the weapons, we know that it's our time to transmit a sound.
+
+Transmitting the sound through the microphone is where it started to get weird. Without writing a driver in C/C++, I couldn't really do much until I found out about voice_input. voice_input is a flag in CS:GO that causes the microphone to switch its source to a file named voice_input.wav in the root CS:GO directory.
+
+If you set voice_input to 1 and execute +voicerecord, you play that file. What the script does is simply set a hotkey up so that when you press a key, it executes those commands (and shuts off). The script then presses those hotkeys for you once it determines a bullet has been fired. This activates the CS:GO keybind, which opens and plays the voice_input.wav file in the root CS:GO directory. When it finishes, it stops.
+
 ## Credits
 
 I worked on CS:GO's gamestate integration with [BumbleMan](http://www.github.com/BumbleMan), check him out!
